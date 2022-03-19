@@ -7,16 +7,29 @@
 using namespace std;
 using namespace cv;
 
-vector<vector<int>> my_colors;
+enum HSV {HMIN = 0, HMAX = 1, SMIN = 2, SMAX = 3, VMIN = 4, VMAX = 5};
 
 // hmin 17, hmax 24, smin 114, smax 184, vmin 178, vmax 255
+vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255} };
+vector<vector<int>> pen_colors{ {255, 255, 0} };
+
+
 void FindColor(Mat img)
 {
+	Mat imgHSV;
+	Mat mask;
 	cvtColor(img, imgHSV, COLOR_BGR2HSV);
 	
-	Scalar lower(hmin, smin, vmin);
-	Scalar upper(hmax, smax, vmax);
-	inRange(imgHSV, lower, upper, mask);
+	
+	for (int i = 0; i < my_colors.size(); i++)
+	{
+		Scalar lower(my_colors[i][HSV::HMIN], my_colors[i][HSV::SMIN], my_colors[i][HSV::VMIN]);
+		Scalar upper(my_colors[i][HSV::HMAX], my_colors[i][HSV::SMAX], my_colors[i][HSV::VMAX]);
+
+		inRange(imgHSV, lower, upper, mask);
+		imshow(to_string(i), mask);
+	}
+	
 }
 
 
