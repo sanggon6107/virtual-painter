@@ -13,6 +13,32 @@ enum HSV {HMIN = 0, HMAX = 1, SMIN = 2, SMAX = 3, VMIN = 4, VMAX = 5};
 vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255} };
 vector<vector<int>> pen_colors{ {255, 255, 0} };
 
+void GetContours(Mat img)
+{
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+	
+	findContours(img, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+	for (int i = 0; i < contours.size(); i++)
+	{
+		int area = contourArea(contours[i]);
+
+		vector<vector<Point>> con_poly(contours.size());
+		//vector<Rect> boundRect(contours.size());
+		//string objectType;
+
+		if (area > 1000)
+		{
+			float peri = arcLength(contours[i], true);
+			approxPolyDP(contours[i], con_poly[i], 0.02 * peri, true);
+		}
+
+
+	}
+
+}
+
 
 void FindColor(Mat img)
 {
@@ -28,6 +54,7 @@ void FindColor(Mat img)
 
 		inRange(imgHSV, lower, upper, mask);
 		imshow(to_string(i), mask);
+		// GetContours(mask);
 	}
 	
 }
