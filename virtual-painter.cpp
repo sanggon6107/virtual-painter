@@ -9,7 +9,7 @@ using namespace cv;
 
 vector<vector<int>> my_colors;
 
-
+// hmin 17, hmax 24, smin 114, smax 184, vmin 178, vmax 255
 void FindColor(Mat img)
 {
 	cvtColor(img, imgHSV, COLOR_BGR2HSV);

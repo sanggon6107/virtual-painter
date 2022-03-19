@@ -12,15 +12,14 @@ int main()
 {
 
 	VideoCapture cap(0);
-
-	string path = "car.jpg";
-	Mat img = imread(path);
+	Mat img;
 	Mat imgHSV;
 	Mat mask;
-	cvtColor(img, imgHSV, COLOR_BGR2HSV);
-
+	
 	int hmin = 0, smin = 0, vmin = 0;
 	int hmax = 179, smax = 255, vmax = 255;
+
+
 
 	namedWindow("Trackbars", (440, 400));
 	createTrackbar("Hue Min", "Trackbars", &hmin, 179);
@@ -32,8 +31,12 @@ int main()
 
 	while (true)
 	{
+		cap.read(img);
+
 		Scalar lower(hmin, smin, vmin); // hue(색상) minimum, saturation(채도) minimum, value(명도) minimum.
 		Scalar upper(hmax, smax, vmax);
+
+		cvtColor(img, imgHSV, COLOR_BGR2HSV);
 		inRange(imgHSV, lower, upper, mask);
 
 		imshow("img", img);
