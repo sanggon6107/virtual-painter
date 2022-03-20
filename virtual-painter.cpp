@@ -8,35 +8,50 @@ using namespace std;
 using namespace cv;
 
 enum HSV {HMIN = 0, HMAX = 1, SMIN = 2, SMAX = 3, VMIN = 4, VMAX = 5};
+Mat img;
+
 
 // hmin 17, hmax 24, smin 114, smax 184, vmin 178, vmax 255
-vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255} };
-vector<vector<int>> pen_colors{ {255, 255, 0} };
+vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255}, // yellow
+								{117, 135, 66, 124, 125, 240} }; // purple
+vector<vector<int>> pen_colors{ {255, 255, 0},   // yellow
+								{255, 0, 255} }; // purple
 
-void GetContours(Mat img)
+Point GetContours(Mat mask)
 {
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
+	Point drawing_point(0, 0);
 	
-	findContours(img, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	findContours(mask, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+	vector<vector<Point>> con_poly(contours.size());
+	vector<Rect> bound_rect(contours.size());
 
 	for (int i = 0; i < contours.size(); i++)
 	{
-		int area = contourArea(contours[i]);
 
-		vector<vector<Point>> con_poly(contours.size());
-		//vector<Rect> boundRect(contours.size());
 		//string objectType;
 
-		if (area > 1000)
+		if (int area = contourArea(contours[i]);
+						area > 1000			  )
 		{
-			float peri = arcLength(contours[i], true);
-			approxPolyDP(contours[i], con_poly[i], 0.02 * peri, true);
+			float peri = arcLength(contours[i], true);				   // ?
+			approxPolyDP(contours[i], con_poly[i], 0.02 * peri, true); // ?
+			bound_rect[i] = boundingRect(con_poly[i]);
+			
+			
+			drawing_point.x = bound_rect[i].x + ( bound_rect[i].width / 2);
+			drawing_point.y = bound_rect[i].y;
+
+
+			drawContours(img, con_poly, i, Scalar(255, 0, 255), 2);
+			rectangle(img, bound_rect[i].tl(), bound_rect[i].br(), Scalar(0, 255, 0), 5);
 		}
 
 
 	}
-
+	return drawing_point;
 }
 
 
@@ -54,7 +69,7 @@ void FindColor(Mat img)
 
 		inRange(imgHSV, lower, upper, mask);
 		imshow(to_string(i), mask);
-		// GetContours(mask);
+		Point drawing_point_on_img = GetContours(mask);
 	}
 	
 }
@@ -63,7 +78,7 @@ void FindColor(Mat img)
 int main()
 {
 	VideoCapture cap(0);
-	Mat img;
+	
 
 	while (true)
 	{
