@@ -32,25 +32,25 @@ Point GetContours(Mat mask)
 	vector<vector<Point>> con_poly(contours.size());
 	vector<Rect> bound_rect(contours.size());
 
-	for (int i = 0; i < contours.size(); i++)
+	for (int point = 0; point < contours.size(); point++)
 	{
 
 		//string objectType;
 
-		if (int area = contourArea(contours[i]);
+		if (int area = contourArea(contours[point]);
 						area > 1000			  )
 		{
-			double peri = arcLength(contours[i], true);
-			approxPolyDP(contours[i], con_poly[i], 0.02 * peri, true); 
-			bound_rect[i] = boundingRect(con_poly[i]);
+			double peri = arcLength(contours[point], true);
+			approxPolyDP(contours[point], con_poly[point], 0.02 * peri, true); 
+			bound_rect[point] = boundingRect(con_poly[point]);
 			
 			
-			drawing_point.x = bound_rect[i].x + ( bound_rect[i].width / 2);
-			drawing_point.y = bound_rect[i].y;
+			drawing_point.x = bound_rect[point].x + ( bound_rect[point].width / 2);
+			drawing_point.y = bound_rect[point].y;
 
 
-			drawContours(img, con_poly, i, Scalar(255, 0, 255), 2);
-			rectangle(img, bound_rect[i].tl(), bound_rect[i].br(), Scalar(0, 255, 0), 5);
+			drawContours(img, con_poly, point, Scalar(255, 0, 255), 2);
+			rectangle(img, bound_rect[point].tl(), bound_rect[point].br(), Scalar(0, 255, 0), 5);
 		}
 
 
@@ -76,13 +76,15 @@ vector<vector<int>> FindColor(Mat img)
 					my_colors[color][static_cast<int>(HSV::SMAX)],
 					my_colors[color][static_cast<int>(HSV::VMAX)]);
 
+
 		inRange(imgHSV, lower, upper, mask);
 		imshow(to_string(color), mask);
-		Point drawing_point_on_img = GetContours(mask);
 
-		if (drawing_point_on_img.x != 0 && drawing_point_on_img.y != 0)
+		Point detected_point = GetContours(mask);
+
+		if (detected_point.x != 0 && detected_point.y != 0)
 		{
-			new_points.emplace_back( drawing_point_on_img.x, drawing_point_on_img.y, color );
+			new_points.push_back({ detected_point.x, detected_point.y, color } );
 		}
 	}
 	return new_points;
