@@ -16,10 +16,9 @@ Mat img;
 vector<vector<int>> drawing_points;
 
 
-// hmin 17, hmax 24, smin 114, smax 184, vmin 178, vmax 255
-vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255}, // yellow
+vector<vector<int>> my_colors{ {17, 24, 114, 184, 178, 255},     // yellow
 								{117, 135, 66, 124, 125, 240} }; // purple
-vector<Scalar> pen_colors{ {0, 255, 255},   // yellow
+vector<Scalar> pen_colors{ {0, 255, 255},        // yellow
 								{255, 0, 255} }; // purple
 
 
@@ -78,7 +77,6 @@ void FindColor(Mat img)
 		imshow(to_string(color), mask);
 
 		vector<Point> detected_points;
-		// detected_points.emplace_back(0, 0);
 
 		GetContours(mask, detected_points);
 
@@ -99,7 +97,8 @@ void DrawOnCanvas(vector<vector<int>>& drawing_points, vector<Scalar>& pen_color
 		circle(img, Point(drawing_points[point][static_cast<int>(POINT_ELEMENTS::X)],
 						  drawing_points[point][static_cast<int>(POINT_ELEMENTS::Y)]),
 					10,
-					pen_colors[drawing_points[point][static_cast<int>(POINT_ELEMENTS::COLOR)]], FILLED);
+					pen_colors[drawing_points[point][static_cast<int>(POINT_ELEMENTS::COLOR)]],
+					FILLED);
 	}
 }
 
