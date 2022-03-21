@@ -24,7 +24,7 @@ vector<Scalar> pen_colors{ {0, 255, 255},   // yellow
 
 
 
-void GetContours(Mat mask, Point& detected_point)
+void GetContours(Mat mask, vector<Point>& detected_points)
 {
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
@@ -43,9 +43,8 @@ void GetContours(Mat mask, Point& detected_point)
 			approxPolyDP(contours[point], con_poly[point], 0.02 * peri, true); 
 			bound_rect[point] = boundingRect(con_poly[point]);
 
-			detected_point.x = bound_rect[point].x + (bound_rect[point].width / 2);
-			detected_point.y = bound_rect[point].y + (bound_rect[point].height / 2);
-
+			detected_points.emplace_back(bound_rect[point].x + (bound_rect[point].width / 2),
+										bound_rect[point].y + (bound_rect[point].height / 2));
 
 			drawContours(img, con_poly, point, Scalar(255, 0, 255), 2);
 			rectangle(img, bound_rect[point].tl(), bound_rect[point].br(), Scalar(0, 255, 0), 5);
@@ -78,13 +77,17 @@ void FindColor(Mat img)
 		inRange(imgHSV, lower, upper, mask);
 		imshow(to_string(color), mask);
 
-		// structured binding
-		Point detected_point(0, 0);
-		GetContours(mask, detected_point);
+		vector<Point> detected_points;
+		// detected_points.emplace_back(0, 0);
 
-		if (detected_point.x != 0 && detected_point.y != 0)
+		GetContours(mask, detected_points);
+
+		if (detected_points.size() != 0)
 		{
-			drawing_points.push_back({ move(detected_point.x), move(detected_point.y), color } );
+			for (auto point : detected_points)
+			{
+				drawing_points.push_back({ move(point.x), move(point.y), color });
+			}
 		}
 	}
 }
